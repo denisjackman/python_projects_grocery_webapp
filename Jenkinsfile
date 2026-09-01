@@ -13,26 +13,7 @@ pipeline {
                     if ! python3 -c "import venv" >/dev/null 2>&1; then
                         sudo apt-get update && sudo apt-get install -y python3-venv
                     fi
-                    if ! command -v mysql >/dev/null 2>&1; then
-                        sudo apt-get update && sudo apt-get install -y mysql-client
-                    fi
                 '''
-            }
-        }
-        stage('Provision database') {
-            steps {
-                withCredentials([string(credentialsId: 'grocery-webapp-db-password', variable: 'DB_PASSWORD')]) {
-                    sh '''
-                        sudo mysql -u root -e "
-                            CREATE DATABASE IF NOT EXISTS grocery_store;
-                            CREATE USER IF NOT EXISTS 'grocery_webapp'@'127.0.0.1' IDENTIFIED BY '${DB_PASSWORD}';
-                            ALTER USER 'grocery_webapp'@'127.0.0.1' IDENTIFIED BY '${DB_PASSWORD}';
-                            GRANT ALL PRIVILEGES ON grocery_store.* TO 'grocery_webapp'@'127.0.0.1';
-                            FLUSH PRIVILEGES;
-                        "
-                        sudo mysql -u root grocery_store < schema.sql
-                    '''
-                }
             }
         }
         stage('Deploy backend') {
