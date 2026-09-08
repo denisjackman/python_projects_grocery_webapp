@@ -29,7 +29,7 @@ pipeline {
                         "$DEPLOY_DIR/venv/bin/pip" install -q -r "$DEPLOY_DIR/backend/requirements.txt"
 
                         cat > "$DEPLOY_DIR/grocery-webapp.env" <<EOF
-DB_HOST=127.0.0.1
+DB_HOST=192.168.1.157
 DB_USER=grocery_webapp
 DB_PASSWORD=${DB_PASSWORD}
 DB_NAME=grocery_store
