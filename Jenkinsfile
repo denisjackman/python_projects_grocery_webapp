@@ -23,9 +23,10 @@ pipeline {
                         mkdir -p "$DEPLOY_DIR/backend"
                         rsync -a --delete --exclude='__pycache__' backend/ "$DEPLOY_DIR/backend/"
 
-                        if [ ! -d "$DEPLOY_DIR/venv" ]; then
-                            python3 -m venv "$DEPLOY_DIR/venv"
-                        fi
+                        # Rebuild the venv every deploy: an OS Python upgrade
+                        # (3.12 -> 3.14) leaves an old venv that imports nothing.
+                        rm -rf "$DEPLOY_DIR/venv"
+                        python3 -m venv "$DEPLOY_DIR/venv"
                         "$DEPLOY_DIR/venv/bin/pip" install -q -r "$DEPLOY_DIR/backend/requirements.txt"
 
                         cat > "$DEPLOY_DIR/grocery-webapp.env" <<EOF
