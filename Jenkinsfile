@@ -25,6 +25,9 @@ pipeline {
 
                         # Rebuild the venv every deploy: an OS Python upgrade
                         # (3.12 -> 3.14) leaves an old venv that imports nothing.
+                        # Stop the running service first: it writes __pycache__ into the
+                        # venv, which makes rm -rf fail with "Directory not empty".
+                        sudo systemctl stop grocery-webapp || true
                         rm -rf "$DEPLOY_DIR/venv"
                         python3 -m venv "$DEPLOY_DIR/venv"
                         "$DEPLOY_DIR/venv/bin/pip" install -q -r "$DEPLOY_DIR/backend/requirements.txt"
